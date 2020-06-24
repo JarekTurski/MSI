@@ -6,7 +6,7 @@ from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 import numpy as np
 import math as mat
-import AUE1
+#import AUE1
 
 #mozna zrobic zeby ladniej wypisywalo te wyniki, w 3 kolumnach
 
