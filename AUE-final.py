@@ -13,15 +13,32 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
         self.base_estimator = base_estimator
         self.epsilon = epsilon
 
-    def check_fitted(clf): 
+    def check_fitted(self,clf): 
         return hasattr(clf, "ensembles_")
 
     def partial_fit(self, X, y, classes):
         X, y = suvalid.check_X_y(X, y)  #sprawdzanie poprawnosci danych wejsciowych
+        print(X)
 
+        #algorytm AUE
+        #p_c = 
+        #tworzenie tablicy ensemble_ dla k klasyfikatorow o najwiekszej wadze
+        if not hasattr(self, "ensemble_"):
+            self.ensemble_ = []
+        #obliczanie MSEr
+        #mser = np.sum(p_c * np.power((1 - p_c), 2))
 
+        #wyuczyc Ci na X 
+         
+        #obliczyc MSE dla Ci, walidacja krzyzowa na X
 
-        # w_i = 1 / (msei + self.epsilon)
+        #obliczenie wagi
+        #w_i = 1 / (msei + self.epsilon)
+
+        #petla do obliczania wag pozostalych klasyfikatorow z komitetu
+
+        #petla: update k klasyfikatorow o najwiekszej wadze
+
 
     def predict(self, X):
         suvalid.check_is_fitted(self, "classes_") #sprawdzenie poprawnosci estymatora >> check_is_fitted(self)
