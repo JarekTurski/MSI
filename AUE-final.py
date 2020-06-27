@@ -13,24 +13,39 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
         self.base_estimator = base_estimator
         self.epsilon = epsilon
 
-    def check_fitted(self,clf): 
-        return hasattr(clf, "ensembles_")
+    def count_p_c(self,y):
+        y_unique = np.unique(y)
+        p_c = np.array([])
+        for i in range(0, len(y_unique)):
+            p_c = np.append(p_c, np.count_nonzero(y == y_unique[i]))
+    
+        return(p_c/ len(y))
+
+        """
+    def count_msei(self,clf, X, y):
+
+
+        """
 
     def partial_fit(self, X, y, classes):
         X, y = suvalid.check_X_y(X, y)  #sprawdzanie poprawnosci danych wejsciowych
         print(X)
 
         #algorytm AUE
-        #p_c = 
+
+        #obliczenie prawdopodobienstwa apriori
+        p_c = count_p_c(y)
+
         #tworzenie tablicy ensemble_ dla k klasyfikatorow o najwiekszej wadze
         if not hasattr(self, "ensemble_"):
             self.ensemble_ = []
         #obliczanie MSEr
-        #mser = np.sum(p_c * np.power((1 - p_c), 2))
-
+        mser = np.sum(p_c * np.power((1 - p_c), 2))
+ 
         #wyuczyc Ci na X 
          
         #obliczyc MSE dla Ci, walidacja krzyzowa na X
+        #msei = count_msei()
 
         #obliczenie wagi
         #w_i = 1 / (msei + self.epsilon)
@@ -38,6 +53,17 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
         #petla do obliczania wag pozostalych klasyfikatorow z komitetu
 
         #petla: update k klasyfikatorow o najwiekszej wadze
+
+        """
+        e = len(self.ensemble_)
+
+        for e in self.ensemble_:
+            if self.w_i[e] > (1/mser):
+                e.fit(self.X_, self.y_)
+
+        return self
+        """
+        # C i epsilon to jest to samo
 
 
     def predict(self, X):
