@@ -1,17 +1,20 @@
 from sklearn.base import ClassifierMixin, clone
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import BaseEnsemble
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import cross_val_predict, cross_val_score
 import sklearn.utils.validation as suvalid #training utilities module
 import numpy as np
 
-# metody partial_fit oraz predict sa uzywane w TestThenTrain.process
 
 class AUEFinal(ClassifierMixin, BaseEnsemble):
 
     #konstruktor
-    def __init__(self, base_estimator, epsilon = 0.00000001):
+    def __init__(self, base_estimator, epsilon = 0.00000001, cv=5, k = 20):
         self.base_estimator = base_estimator
         self.epsilon = epsilon
+        self.k = k
+        self.cv= cv
 
     def count_p_c(self,y):
         y_unique = np.unique(y)
@@ -21,36 +24,33 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
     
         return(p_c/ len(y))
 
-        """
-    def count_msei(self,clf, X, y):
-
-
-        """
-
     def partial_fit(self, X, y, classes):
+
         X, y = suvalid.check_X_y(X, y)  #sprawdzanie poprawnosci danych wejsciowych
-        print(X)
+       
+        self.X_, self.y_ = X, y
+        self.classes_ = classes
+        if self.classes_ is None:
+            self.classes_, _ = np.unique(y, return_inverse=True)
 
-        #algorytm AUE
+        p_c = count_p_c(y)   #obliczenie prawdopodobienstwa
 
-        #obliczenie prawdopodobienstwa apriori
-        p_c = count_p_c(y)
-
-        #tworzenie tablicy ensemble_ dla k klasyfikatorow o najwiekszej wadze
-        if not hasattr(self, "ensemble_"):
+        if not hasattr(self, "ensemble_"):  #tworzenie tablicy ensemble_ dla k klasyfikatorow o najwiekszej wadze
             self.ensemble_ = []
-        #obliczanie MSEr
-        mser = np.sum(p_c * np.power((1 - p_c), 2))
- 
-        #wyuczyc Ci na X 
-         
-        #obliczyc MSE dla Ci, walidacja krzyzowa na X
-        #msei = count_msei()
 
-        #obliczenie wagi
-        #w_i = 1 / (msei + self.epsilon)
+        mser = np.sum(p_c * np.power((1 - p_c), 2))  #obliczanie MSEr
+ 
+        c_prime = clone(self.base_estimator).fit(self.X_, self.y_)  #uczenie Ci na X 
+
+        #obliczyc MSE dla Ci, walidacja krzyzowa na X
+        cv_score = np.mean(cross_val_score(c_prime, self.X_, self.y_, cv=self.cv, scoring='neg_mean_squared_error')) 
+        
+        w_prime = 1 / (cv_score + self.epsilon)  #obliczenie wagi
 
         #petla do obliczania wag pozostalych klasyfikatorow z komitetu
+        C_scores = [(1 / (mean_squared_error(Ci.predict(self.X_), self.y_) + self.epsilon), Ci, False) for Ci in self.ensemble_]
+        C_scores.append((w_prime, c_prime, True))
+
 
         #petla: update k klasyfikatorow o najwiekszej wadze
 
@@ -63,7 +63,7 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
 
         return self
         """
-        # C i epsilon to jest to samo
+
 
 
     def predict(self, X):
@@ -78,5 +78,3 @@ class AUEFinal(ClassifierMixin, BaseEnsemble):
         prediction_array = np.argmax(average, axis=1)  #wskazanie etykiet
 
         return self.classes_[prediction_array] #zwrocenie predykcji 
-        
-    
