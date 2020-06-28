@@ -177,24 +177,3 @@ f_incremental.write(stat_better_table_i)
 f_sudden.close()
 f_gradual.close()
 f_incremental.close()
-    array2d = evaluator.scores.reshape(249,3)
-    resultsmean = np.mean(array2d, axis=0)
-    np.savetxt(f_sudden, resultsmean, delimiter=",", fmt='%0.3f')
-
-    #wypisywanie wynikow dla dryfu gradualnego dla wszystkich klasyfikatorow
-    str_gradual = StreamGenerator(n_drifts=1, concept_sigmoid_spacing=5, random_state=rnd_st)
-    evaluator.process(str_gradual, clfs)
-    array2d = evaluator.scores.reshape(249,3)
-    resultsmean = np.mean(array2d, axis=0)
-    np.savetxt(f_gradual, resultsmean, delimiter=",", fmt='%0.3f')
-
-    #wypisywanie wynikow dla dryfu inkremetalnego dla wszystkich klasyfikatorow
-    str_incremental = StreamGenerator(n_drifts=1, concept_sigmoid_spacing=5, incremental=True, random_state=rnd_st)
-    evaluator.process(str_incremental, clfs)
-    array2d = evaluator.scores.reshape(249,3)
-    resultsmean = np.mean(array2d, axis=0)
-    np.savetxt(f_incremental, resultsmean, delimiter=",", fmt='%0.3f')
-
-f_sudden.close()
-f_gradual.close()
-f_incremental.close()
