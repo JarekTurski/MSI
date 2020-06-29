@@ -10,16 +10,14 @@ from scipy.stats import ttest_ind
 from tabulate import tabulate
 #import AUE1
 
-#petle!
-
 rnd_st = 10 #bedziemy podstawiac 10,20,30...100
 
 #Classificators
 clf1 = SEA(base_estimator = GaussianNB())
 clf2 = AWE(base_estimator = GaussianNB())
 clf3 = WAE(base_estimator = GaussianNB())
-#clf4 = AUE1(ClassifierMixin, BaseEnsemble)
-clfs = (clf1, clf2, clf3) #dopisac AUE
+clf4 = AUEfinal(base_estimator = GaussianNB())
+clfs = (clf1, clf2, clf3, clf4) 
 
 #Evaluator with accuracy_score metrics
 evaluator = TestThenTrain(metrics=accuracy_score)
@@ -58,7 +56,7 @@ for rnd_st in range(10,110,10): #rnd_st przechowuje aktualna wartosc random_stat
     scores_incremental[int(rnd_st/10 - 1)] = np.mean(array2d, axis=0)
 
 #write mean scores to file
-headers = ["SEA", "AWE", "WAE"] #dopisac AUE
+headers = ["SEA", "AWE", "WAE", "AUE"] 
 s_scores_table = tabulate(scores_sudden, headers, floatfmt=".2f")
 f_sudden.write("Mean score for each of 10 streams and 4 classificators:\n")
 f_sudden.write(s_scores_table) 
@@ -88,8 +86,8 @@ for i in range(len(clfs)):
         t_statistic_gradual[i, j], p_value_gradual[i, j] = ttest_ind(scores_gradual[i], scores_gradual[j])
         t_statistic_incremental[i, j], p_value_incremental[i, j] = ttest_ind(scores_incremental[i], scores_incremental[j])
 
-headers = ["SEA", "AWE", "WAE"] #dopisac AUE
-names_column = np.array([["SEA"], ["AWE"], ["WAE"]]) #dopisac AUE
+headers = ["SEA", "AWE", "WAE", "AUE"] 
+names_column = np.array([["SEA"], ["AWE"], ["WAE"], ["AUE"]])
 t_statistic_table_sudden = np.concatenate((names_column, t_statistic_sudden), axis=1)
 t_statistic_table_sudden = tabulate(t_statistic_table_sudden, headers, floatfmt=".2f")
 p_value_table_sudden = np.concatenate((names_column, p_value_sudden), axis=1)
