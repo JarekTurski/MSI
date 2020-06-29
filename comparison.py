@@ -23,7 +23,7 @@ clfs = (clf1, clf2, clf3, clf4)
 evaluator = TestThenTrain(metrics=accuracy_score)
 
 #Arrays for each drift(columns: clf, rows: streams)
-scores_sudden = np.zeros(shape=(10,len(clfs)))  #zamienic na empty
+scores_sudden = np.zeros(shape=(10,len(clfs)))
 scores_gradual = np.zeros(shape=(10,len(clfs)))
 scores_incremental = np.zeros(shape=(10,len(clfs)))
 
